@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>User List</title>
+<link type="text/css" rel="stylesheet" href="/css/bootstrap.min.css"
+	th:href="@{/css/bootstrap.min.css}" />
+</head>
+<body>
+	<h1>User List</h1>
+	<table class="table table-bordered table-striped">
+		<thead>
+			<tr>
+				<th th:if="${#authorization.expression('hasRole(''ADMIN'')')}">ID</th>
+				<th>Name</th>
+				<th th:if="${#authorization.expression('hasRole(''ADMIN'')')}">Username</th>
+				<th>Email</th>
+				<th>Phonenumber</th>
+				<th th:if="${#authorization.expression('hasRole(''ADMIN'')')}">Birthyear</th>
+				<th>Team</th>
+				<th>Kitnumber</th>
+				<th th:if="${#authorization.expression('hasRole(''ADMIN'')')}">Role</th>
+				<th th:if="${#authorization.expression('hasRole(''ADMIN'')')}">Edit/Delete</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="user : ${users}">
+				<td th:if="${#authorization.expression('hasRole(''ADMIN'')')}" th:text="${user.id}"></td>
+				<td th:text="${user.name}"></td>
+				<td th:if="${#authorization.expression('hasRole(''ADMIN'')')}" th:text="${user.username}"></td>
+				<td th:text="${user.email}"></td>
+				<td th:text="${user.phone}"></td>
+				<td th:if="${#authorization.expression('hasRole(''ADMIN'')')}" th:text="${user.birthyear}"></td>
+				<td th:text="${user.team != null ? user.team.name : 'No Team'}"></td>
+				<td th:text="${user.kitnumber}"></td>
+				<td th:if="${#authorization.expression('hasRole(''ADMIN'')')}" th:text="${user.role}"></td>
+
+				<td th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+					<div class="btn-group">
+						<a th:href="@{'/users/edit/' + ${user.id}}" class="btn btn-info">
+							Edit </a>
+					</div>
+					<button class="btn btn-danger" th:attr="data-user-id=${user.id}"
+						onclick="deleteuser(this)">Delete</button>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	
+	<div class="btn-group">
+		<a href="http://localhost:8080" class="btn btn-info">Back to the front page</a>
+	</div>
+
+	<div class="btn-group">
+		<a href="http://localhost:8080/teams" class="btn btn-info"> List
+			of teams</a>
+	</div>
+
+	<div class="btn-group" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+		<a href="http://localhost:8080/users/add" class="btn btn-info">
+			Add a new user</a>
+	</div>
+	
+	<div class="btn-group" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+		<a href="http://localhost:8080/users/add/admin" class="btn btn-info">
+			Create a new admin</a>
+	</div>
+
+	<div class="btn-group">
+		<a href="http://localhost:8080/matches" class="btn btn-info"> All
+			matches</a>
+	</div>
+
+	<br>
+
+	<script>
+    function deleteuser(button) {
+        var userId = button.getAttribute('data-user-id');
+        var confirmation = confirm('Are you sure you want to delete this user?');
+
+        if (confirmation) {
+            fetch(`/api/users/${userId}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                location.reload();
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+        }
+    }
+</script>
+</body>
+</html>

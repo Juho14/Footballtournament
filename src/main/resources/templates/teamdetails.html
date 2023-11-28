@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Team Members</title>
+<link type="text/css" rel="stylesheet" href="/css/bootstrap.min.css"
+	th:href="@{/css/bootstrap.min.css}" />
+<style>
+table {
+	text-align: center;
+}
+</style>
+</head>
+<body>
+
+
+	<h3>Managers and their contact info: </h3>
+	<table class="table table-bordered table-striped">
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Phone number</th>
+				<th>Email</th>
+				<th>Team</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="manager : ${managers}">
+				<td th:text="${manager.name}"></td>
+				<td th:text="${manager.phone}"></td>
+				<td th:text="${manager.email}"></td>
+				<td th:text="${manager.team.name}"></td>
+				<td th:text="${manager.kitnumber}"></td>
+			</tr>
+		</tbody>
+	</table>
+	<div class="btn-group">
+		<a href="http://localhost:8080/schedule" class="btn btn-info"> See
+			your matches</a>
+	</div>
+	<div class="btn-group">
+		<a href="http://localhost:8080" class="btn btn-info"> Back to the
+			front page</a>
+	</div>
+	<form th:action="@{/logout}" method="post">
+		<input type="submit" value="Logout" />
+	</form>
+</body>
+</html>

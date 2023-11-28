@@ -1,0 +1,164 @@
+<!DOCTYPE HTML>
+
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+
+<head>
+
+<title>Home page</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link type="text/css" rel="stylesheet" href="/css/bootstrap.min.css"
+	th:href="@{/css/bootstrap.min.css}" />
+</head>
+<body>
+
+	<h3>This is the front page of your team!</h3>
+	<br>
+	<h6>Welcome to our site! We can help you keep track of your
+		upcoming matches, members, tournaments etc.</h6>
+	<h6>For more information either:</h6>
+	<h6>Call us at +3581234567</h6>
+	<h6>Email us at footballtourneys@myy.haaga-helia.fi</h6>
+	<br>
+	<h3>Welcome:</h3>
+	<table class="table table-bordered table-striped"
+		th:if="${#authorization.expression('hasRole(''PLAYER'')') OR #authorization.expression('hasRole(''MANAGER'')')}">
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Username</th>
+				<th>Email</th>
+				<th>Birthyear</th>
+				<th>Team</th>
+				<th>Kitnumber</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="user : ${user}">
+				<td th:text="${user.name}"></td>
+				<td th:text="${user.username}"></td>
+				<td th:text="${user.email}"></td>
+				<td th:text="${user.birthyear}"></td>
+				<td th:text="${user.team != null ? user.team.name : 'No Team'}"></td>
+				<td th:text="${user.kitnumber}"></td>
+			</tr>
+		</tbody>
+	</table>
+
+	<table class="table table-bordered table-striped"
+		th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Username</th>
+				<th>Email</th>
+				<th>Role</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="user : ${user}">
+				<td th:text="${user.name}"></td>
+				<td th:text="${user.username}"></td>
+				<td th:text="${user.email}"></td>
+				<td th:text="${user.role}"></td>
+			</tr>
+		</tbody>
+	</table>
+
+	<br />
+
+	<div
+		th:if="${#authorization.expression('hasRole(''PLAYER'')') OR #authorization.expression('hasRole(''MANAGER'')')}">
+
+
+		<div class="btn-group">
+			<a href="http://localhost:8080/memberlist" class="btn btn-info">See
+				your teammates here</a>
+		</div>
+
+		<div class="btn-group">
+			<a href="http://localhost:8080/schedule" class="btn btn-info">
+				See your matches</a>
+		</div>
+
+		<br> <br>
+
+		<div class="btn-group">
+			<a href="http://localhost:8080/matches" class="btn btn-info"> All
+				matches</a>
+		</div>
+
+		<div class="btn-group"
+			th:if="${#authorization.expression('hasRole(''MANAGER'')')}">
+			<a href="http://localhost:8080/matches/add" class="btn btn-info">
+				Create a match</a>
+		</div>
+
+		<br> <br>
+
+		<div class="btn-group">
+			<a href="http://localhost:8080/teams" class="btn btn-info"> List
+				of teams</a>
+		</div>
+
+		<div class="btn-group" th:if="${#authorization.expression('hasRole(''MANAGER'')')}">
+			<a href="http://localhost:8080/users" class="btn btn-info">
+				Userlist</a>
+		</div>
+
+	</div>
+
+	<br>
+	<br>
+
+	<div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+		<h5>Admin views</h5>
+		<div class="btn-group">
+			<a href="http://localhost:8080/users" class="btn btn-info">
+				Userlist</a>
+		</div>
+		<div class="btn-group">
+			<a href="http://localhost:8080/matches" class="btn btn-info"> All
+				matches</a>
+		</div>
+		<div class="btn-group">
+			<a href="http://localhost:8080/teams" class="btn btn-info"> List
+				of teams</a>
+		</div>
+
+	</div>
+
+	<div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+		<h5>Admin functions</h5>
+		<div class="btn-group">
+			<a href="http://localhost:8080/teams/add" class="btn btn-info">
+				Create a team</a>
+		</div>
+		<div class="btn-group">
+			<a href="http://localhost:8080/users/add" class="btn btn-info">
+				Add a new user</a>
+		</div>
+
+		<div class="btn-group">
+			<a href="http://localhost:8080/users/add/admin" class="btn btn-info">
+				Create a new admin</a>
+		</div>
+
+		<div class="btn-group">
+			<a href="http://localhost:8080/matches/add" class="btn btn-info">
+				Create a match</a>
+		</div>
+
+	</div>
+	<br>
+	<div class="btn-group">
+		<a href="/users/edit/password" class="btn btn-info"> Change
+			password </a>
+	</div>
+
+	<form th:action="@{/logout}" method="post">
+		<input type="submit" value="Logout" />
+	</form>
+
+</body>
+</html>

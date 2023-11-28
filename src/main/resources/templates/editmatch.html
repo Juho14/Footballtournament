@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Match</title>
+    <link type="text/css" rel="stylesheet" href="/css/bootstrap.min.css"
+        th:href="@{/css/bootstrap.min.css}" />
+</head>
+<body>
+
+    <h1>Edit Match</h1>
+
+    <h5>
+        Date of the match: <span
+            th:text="${#temporals.format(match.matchDate, 'dd.MM.yyyy')}"></span>
+    </h5>
+
+    <form id="editMatchForm" th:action="@{/api/matches/{matchId}(matchId=${match.id})}" th:object="${match}" method="put" onsubmit="submitForm(event)">
+    <input type="hidden" th:field="*{id}" />
+        
+        <label for="matchDate">Match Date:</label>
+        <input type="date" id="matchDate" name="matchDate"
+            th:value="${#temporals.format(match.matchDate, 'yyyy-MM-dd')}"/> 
+        
+        <label for="homeTeam">Home Team:</label>
+        <select id="homeTeam" name="homeTeam.id" th:field="*{homeTeam.id}" required>
+            <option th:each="team : ${teams}" th:value="${team.id}"
+                th:text="${team.name}"></option>
+        </select>
+         
+        <label for="result">Result:</label>
+        <input type="text" id="result" name="result" th:field="*{result}" required />
+        
+        <label for="awayTeam">Away Team:</label>
+        <select id="awayTeam" name="awayTeam.id" th:field="*{awayTeam.id}" required>
+            <option th:each="team : ${teams}" th:value="${team.id}"
+                th:text="${team.name}"></option>
+        </select>
+        
+        <button type="submit">Update Match</button>
+    </form>
+
+    <script>
+    function submitForm(event) {
+        event.preventDefault();
+
+        var form = document.getElementById('editMatchForm');
+        var formData = new FormData(form);
+
+        var jsonObject = {};
+        formData.forEach((value, key) => {
+            if (key.endsWith('.id')) {
+                var teamKey = key.substring(0, key.indexOf('.id'));
+                jsonObject[teamKey] = { 'id': value };
+            } else {
+                jsonObject[key] = value;
+            }
+        });
+
+        
+        var date = new Date(formData.get('matchDate'));
+        var formattedDate = date.toISOString().split('T')[0];
+
+        jsonObject['matchDate'] = formattedDate;
+        fetch(form.action, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsonObject),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            window.location.href = '/matches';
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+    }
+</script>
+
+</body>
+</html>

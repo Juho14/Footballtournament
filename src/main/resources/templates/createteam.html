@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Create Team</title>
+<link type="text/css" rel="stylesheet" href="/css/bootstrap.min.css"
+	th:href="@{/css/bootstrap.min.css}" />
+</head>
+<body>
+
+	<h1>Create Team</h1>
+
+	<form id="createTeamForm" th:action="@{/api/teams}" method="post"
+		onsubmit="submitForm(event)">
+		<label for="team.name">Team Name:</label> <input type="text"
+			id="team.name" name="name" th:field="*{team.name}" required />
+
+		<button type="submit">Create Team</button>
+	</form>
+
+	<div class="btn-group">
+		<a href="http://localhost:8080/memberlist" class="btn btn-info">Back
+			to the front page</a>
+	</div>
+
+	<div class="btn-group">
+		<a href="http://localhost:8080/teams" class="btn btn-info"> List
+			of teams</a>
+	</div>
+
+
+	<script>
+        function submitForm(event) {
+            event.preventDefault();
+
+            var form = document.getElementById('createTeamForm');
+            var formData = new FormData(form);
+
+            var jsonObject = {};
+            formData.forEach((value, key) => {
+                jsonObject[key] = value;
+            });
+
+            fetch('/api/teams', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(jsonObject)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                window.location.href = '/teams';
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+        }
+    </script>
+
+</body>
+</html>

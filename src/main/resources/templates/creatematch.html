@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+<meta charset="UTF-8">
+<title>Create User</title>
+<link type="text/css" rel="stylesheet" href="/css/bootstrap.min.css"
+	th:href="@{/css/bootstrap.min.css}" />
+<style>
+.form-group {
+	margin-bottom: 10px;
+}
+
+label {
+	display: block;
+	margin-bottom: 5px;
+}
+
+.inputfields {
+	width: 300px;
+}
+
+.center-form {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+}
+
+.form-container {
+	width: 400px;
+}
+</style>
+</head>
+<body>
+
+	<div class="center-form">
+		<div class="form-container">
+			<h1>Create Match</h1>
+
+			<form id="createMatchForm" th:action="@{/matches/add}" method="post"
+				onsubmit="submitForm(event)">
+				<div class="form-group">
+					<label for="homeTeamId">Home Team:</label> <select
+						class="form-control inputfields" id="homeTeamId" name="homeTeamId">
+						<option th:each="team : ${teams}" th:value="${team.id}"
+							th:text="${team.name}"></option>
+					</select>
+				</div>
+
+				<div class="form-group">
+					<label for="awayTeamId">Away Team:</label> <select
+						class="form-control inputfields" id="awayTeamId" name="awayTeamId">
+						<option th:each="team : ${teams}" th:value="${team.id}"
+							th:text="${team.name}"></option>
+					</select>
+				</div>
+
+				<div class="form-group">
+					<label for="matchDate">Date:</label> <input type="date"
+						class="form-control inputfields" id="matchDate" name="matchDate" />
+				</div>
+
+
+				<button type="submit" class="btn btn-primary">Create Match</button>
+			</form>
+
+			<div class="btn-group">
+				<a href="http://localhost:8080" class="btn btn-info"> Back to
+					the front page</a>
+			</div>
+
+			<div class="btn-group">
+				<a href="http://localhost:8080/matches" class="btn btn-info">
+					All matches</a>
+			</div>
+
+			<script>
+            function submitForm(event) {
+                event.preventDefault();
+
+                var form = document.getElementById('createMatchForm');
+                var formData = new FormData(form);
+
+                var jsonObject = {};
+                formData.forEach((value, key) => {
+                    jsonObject[key] = value;
+                });
+
+                jsonObject['homeTeam'] = { 'id': document.getElementById('homeTeamId').value };
+                jsonObject['awayTeam'] = { 'id': document.getElementById('awayTeamId').value };
+
+                fetch('/api/matches', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(jsonObject)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    window.location.href = '/matches';
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                });
+            }
+
+            </script>
+		</div>
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Create User</title>
+<link type="text/css" rel="stylesheet" href="/css/bootstrap.min.css"
+	th:href="@{/css/bootstrap.min.css}" />
+<style>
+.form-group {
+	margin-bottom: 10px;
+}
+
+label {
+	display: block;
+	margin-bottom: 5px;
+}
+
+.inputfields {
+	width: 300px;
+}
+
+.center-form {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+}
+
+.form-container {
+	width: 400px;
+}
+</style>
+</head>
+<body>
+
+	<div class="center-form">
+		<div class="form-container">
+			<h1>Create User</h1>
+
+			<form id="createUserForm" th:action="@{/api/users}" method="post"
+				onsubmit="submitForm(event)">
+				<div class="form-group">
+					<label for="name">Name:</label> <input type="text"
+						class="form-control inputfields" id="name" name="name" />
+				</div>
+
+				<div class="form-group">
+					<label for="phone">Phone:</label> <input type="text"
+						class="form-control inputfields" id="phone" name="phone" />
+				</div>
+
+				<div class="form-group">
+					<label for="email">Email:</label> <input type="email"
+						class="form-control inputfields" id="email" name="email" />
+				</div>
+
+				<div class="form-group">
+					<label for="birthyear">Birth Year:</label> <input type="number"
+						class="form-control inputfields" id="birthyear" name="birthyear" />
+				</div>
+
+				<div class="form-group">
+					<label for="kitnumber">Kit Number:</label> <input type="text"
+						class="form-control inputfields" id="kitnumber" name="kitnumber"
+						placeholder="Number or Manager" />
+				</div>
+
+				<div class="form-group">
+					<label for="team">Team:</label> <select
+						class="form-control inputfields" id="team" name="team">
+						<option th:each="team : ${teams}" th:value="${team.id}"
+							th:text="${team.name}"></option>
+					</select>
+				</div>
+
+
+				<div class="form-group">
+					<label for="username">Username:</label> <input type="text"
+						class="form-control inputfields" id="username" name="username"
+						required />
+				</div>
+
+				<div class="form-group">
+					<label for="passwordHash">Password:</label> <input type="password"
+						class="form-control inputfields" id="passwordHash"
+						name="passwordHash" required />
+				</div>
+				
+				 <div class="form-group">
+                    <label for="confirmPassword">Confirm Password:</label>
+                    <input type="password" class="form-control inputfields" id="confirmPassword" name="confirmPassword" required />
+                </div>
+
+				<div class="form-group">
+					<label for="role">Role:</label> <select
+						class="form-control inputfields" id="role" name="role" required>
+						<option value="ROLE_PLAYER">Player</option>
+						<option value="ROLE_MANAGER">Manager</option>
+					</select>
+				</div>
+
+				<button type="submit" class="btn btn-primary">Create User</button>
+			</form>
+
+			<div class="btn-group">
+				<a href="http://localhost:8080" class="btn btn-info"> Back to
+					the front page</a>
+			</div>
+
+			<div class="btn-group">
+				<a href="http://localhost:8080/users" class="btn btn-info">
+					Userlist</a>
+			</div>
+
+			<script>
+			function submitForm(event) {
+			    event.preventDefault();
+
+			    var form = document.getElementById('createUserForm');
+			    var formData = new FormData(form);
+			    
+			    var password = formData.get('passwordHash');
+                var confirmPassword = formData.get('confirmPassword');
+                
+                if (password.length < 7) {
+                    alert('Password must be at least 7 characters long.');
+                    return;
+                }
+
+                if (password !== confirmPassword) {
+                    alert('Passwords do not match. Please re-enter your passwords.');
+                    return;
+                }
+
+			    var jsonObject = {};
+			    formData.forEach((value, key) => {
+			        if (key === "password") {
+			            if (value.trim() !== "") {
+			                jsonObject[key] = value;
+			            }
+			        } else {
+			            jsonObject[key] = value;
+			        }
+			    });
+
+			    var selectedTeamId = document.getElementById('team').value;
+			    var selectedTeam = Array.from(document.getElementById('team').options).find(option => option.value === selectedTeamId);
+
+			    jsonObject['team'] = {
+			        id: selectedTeam.value,
+			        name: selectedTeam.text
+
+			    };
+
+			    fetch('/api/users', {
+			        method: 'POST',
+			        headers: {
+			            'Content-Type': 'application/json'
+			        },
+			        body: JSON.stringify(jsonObject)
+			    })
+			    .then(response => {
+			        if (!response.ok) {
+			            throw new Error('Network response was not ok');
+			        }
+			        return response.json();
+			    })
+			    .then(data => {
+			        window.location.href = '/users';
+			    })
+			    .catch(error => {
+			        console.error('There was a problem with the fetch operation:', error);
+			    });
+			}
+
+        </script>
+		</div>
+	</div>
+</body>
+</html>

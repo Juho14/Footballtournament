@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>View Attendees</title>
+    <link type="text/css" rel="stylesheet" href="/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" />
+    <style>
+        table {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>
+        Attendees for Match - <span th:text="${match.homeTeam.name} + ' vs ' + ${match.awayTeam.name}"></span>
+    </h1>
+
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Birth Year</th>
+                <th>Kit Number</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="attendee : ${attendees}">
+                <th:block th:if="${match.attendees.contains(attendee)}">
+                    <td th:text="${attendee.name}"></td>
+                    <td th:text="${attendee.phone}"></td>
+                    <td th:text="${attendee.email}"></td>
+                    <td th:text="${attendee.birthyear}"></td>
+                    <td th:text="${attendee.kitnumber}"></td>
+                </th:block>
+            </tr>
+        </tbody>
+    </table>
+    
+    <div class="btn-group">
+        <a href="http://localhost:8080" class="btn btn-info">Back to the front page</a>
+    </div>
+    
+    <div class="btn-group">
+        <a href="http://localhost:8080/schedule" class="btn btn-info">Back to your schedule</a>
+    </div>
+
+    <form th:action="@{/logout}" method="post">
+        <input type="submit" value="Logout" />
+    </form>
+</body>
+</html>

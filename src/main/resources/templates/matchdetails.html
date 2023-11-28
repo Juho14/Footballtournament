@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Team Members</title>
+<link type="text/css" rel="stylesheet" href="/css/bootstrap.min.css"
+	th:href="@{/css/bootstrap.min.css}" />
+<style>
+table {
+	text-align: center;
+}
+</style>
+</head>
+<body>
+
+	<table class="table table-bordered table-striped">
+		<thead>
+			<tr>
+				<th>Home team</th>
+				<th>Result</th>
+				<th>Away team</th>
+				<th>Date</th>
+			</tr>
+		</thead>
+		<tbody>
+
+			<tr th:each="match : ${match}">
+				<td th:text="${match.homeTeam.name}"></td>
+				<td th:text="${match.result}"></td>
+				<td th:text="${match.awayTeam.name}"></td>
+				<td th:text="${#temporals.format(match.matchDate, 'dd.MM.yyyy')}"></td>
+			</tr>
+
+		</tbody>
+	</table>
+	<div class="btn-group">
+		<a th:href="@{'/matches/edit/' + ${match.id}}" class="btn btn-info">
+			Set result / Edit </a>
+	</div>
+	
+	<h1>Attendees</h1>
+	<table class="table table-bordered table-striped">
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Kit number</th>
+				<th>Phone number</th>
+				<th>Email</th>
+				<th>Team</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="attendee : ${attendees}">
+				<td th:text="${attendee.name}"></td>
+				<td th:text="${attendee.kitnumber}"></td>
+				<td th:text="${attendee.phone}"></td>
+				<td th:text="${attendee.email}"></td>
+				<td th:text="${attendee.team.name}"></td>
+				<td th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+					<form
+						th:action="@{'/removeattendee/' + ${match.id} + '/' + ${attendee.id}}"
+						method="post">
+						<button type="submit" class="btn btn-danger">Remove from
+							match</button>
+					</form>
+
+
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<div class="btn-group">
+		<a href="http://localhost:8080/schedule" class="btn btn-info"> See
+			your matches</a>
+	</div>
+	<div class="btn-group">
+		<a href="http://localhost:8080" class="btn btn-info"> Back to the
+			front page</a>
+	</div>
+	<form th:action="@{/logout}" method="post">
+		<input type="submit" value="Logout" />
+	</form>
+</body>
+</html>

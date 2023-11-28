@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Team Members</title>
+    <link type="text/css" rel="stylesheet" href="/css/bootstrap.min.css"
+	th:href="@{/css/bootstrap.min.css}" />
+</head>
+<body>
+    <h1>Players</h1>
+    <table class="table table-bordered table-striped">
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Kit number</th>
+				<th>Phone number</th>
+				<th>Email</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="player : ${players}">
+				<td th:text="${player.name}"></td>
+				<td th:text="${player.kitnumber}"></td>
+				<td th:text="${player.phone}"></td>
+				<td th:text="${player.email}"></td>
+			</tr>
+		</tbody>
+	</table>
+    <h1>Managers</h1>
+    <table class="table table-bordered table-striped">
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Phone number</th>
+				<th>Email</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="manager : ${managers}">
+				<td th:text="${manager.name}"></td>
+				<td th:text="${manager.phone}"></td>
+				<td th:text="${manager.email}"></td>
+			</tr>
+		</tbody>
+	</table>
+	<div class="btn-group">
+		<a href="http://localhost:8080/schedule" class="btn btn-info"> See your matches</a>
+	</div>
+	<div class="btn-group">
+		<a href="http://localhost:8080" class="btn btn-info"> Back to the front page</a>
+	</div>
+	<form th:action="@{/logout}" method="post">
+		<input type="submit" value="Logout" />
+	</form>
+</body>
+</html>

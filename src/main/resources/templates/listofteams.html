@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Teams</title>
+<link type="text/css" rel="stylesheet" href="/css/bootstrap.min.css"
+	th:href="@{/css/bootstrap.min.css}" />
+<style>
+table {
+	text-align: center;
+}
+</style>
+</head>
+<body>
+	<h1>Teams</h1>
+
+
+
+	<table class="table table-bordered table-striped">
+		<thead>
+			<tr>
+			<th th:if="${#authorization.expression('hasRole(''ADMIN'')')}">ID</th>
+				<th>Team Name</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="team : ${teams}">
+			<td th:if="${#authorization.expression('hasRole(''ADMIN'')')}" th:text="${team.id}"></td>
+				<td th:text="${team.name}"></td>
+				<td>
+					<div class="btn-group">
+						<a th:href="@{'/teams/' + ${team.id}}" class="btn btn-info">
+							Contact info </a>
+					</div>
+					<div class="btn-group"
+						th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+						<a th:href="@{'/teams/edit/' + ${team.id}}" class="btn btn-info">
+							Edit </a>
+					</div>
+					<button class="btn btn-danger" th:attr="data-team-id=${team.id}"
+						th:if="${#authorization.expression('hasRole(''ADMIN'')')}"
+						onclick="deleteteam(this)">Delete</button>
+				</td>
+
+			</tr>
+		</tbody>
+	</table>
+
+	<div class="btn-group">
+		<a href="http://localhost:8080" class="btn btn-info">Back to the
+			front page</a>
+	</div>
+
+	<div class="btn-group"
+		th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+		<a href="http://localhost:8080/teams/add" class="btn btn-info">
+			Create a team</a>
+	</div>
+
+	<div class="btn-group"
+		th:if="${#authorization.expression('hasRole(''ADMIN'')') OR #authorization.expression('hasRole(''MANAGER'')')}">
+		<a href="http://localhost:8080/users" class="btn btn-info">
+			Userlist</a>
+	</div>
+
+	<div class="btn-group">
+		<a href="http://localhost:8080/matches" class="btn btn-info"> All
+			matches</a>
+	</div>
+
+	<form th:action="@{/logout}" method="post">
+		<input type="submit" value="Logout" />
+	</form>
+
+	<script>
+    function deleteteam(button) {
+        var teamId = button.getAttribute('data-team-id');
+        var confirmation = confirm('Are you sure you want to delete this team?');
+
+        if (confirmation) {
+            fetch(`/api/teams/${teamId}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                location.reload();
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+        }
+    }
+</script>
+</body>
+</html>

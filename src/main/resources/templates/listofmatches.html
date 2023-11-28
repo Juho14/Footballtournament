@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Match List</title>
+<link type="text/css" rel="stylesheet" href="/css/bootstrap.min.css"
+	th:href="@{/css/bootstrap.min.css}" />
+<style>
+table {
+	text-align: center;
+}
+</style>
+</head>
+<body>
+	<h1>Match List</h1>
+	<table class="table table-bordered table-striped">
+		<thead>
+			<tr>
+				<th th:if="${#authorization.expression('hasRole(''ADMIN'')')}">ID</th>
+				<th>Home Team</th>
+				<th>Result</th>
+				<th>Away Team</th>
+				<th>Date</th>
+				<th
+					th:if="${#authorization.expression('hasRole(''ADMIN'')') OR #authorization.expression('hasRole(''MANAGER'')')}">Details</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="match : ${matches}">
+				<td th:if="${#authorization.expression('hasRole(''ADMIN'')')}"
+					th:text="${match.id}"></td>
+				<td
+					th:text="${match.homeTeam != null ? match.homeTeam.name : '~Removed~'}"></td>
+				<td th:text="${match.result}"></td>
+				<td
+					th:text="${match.awayTeam != null ? match.awayTeam.name : '~Removed~'}"></td>
+				<td th:text="${#temporals.format(match.matchDate, 'dd.MM.yyyy')}"></td>
+				<td
+					th:if="${#authorization.expression('hasRole(''ADMIN'')') OR #authorization.expression('hasRole(''MANAGER'')')}"><a
+					th:href="@{'/matches/' + ${match.id}}" class="btn btn-info">Details</a></td>
+				<td>
+					<div class="btn-group"
+						th:if="${#authorization.expression('hasRole(''ADMIN'')') OR #authorization.expression('hasRole(''MANAGER'')')}">
+						<a th:href="@{'/matches/edit/' + ${match.id}}"
+							class="btn btn-info"> Set result / Edit </a>
+					</div>
+					<button class="btn btn-danger" th:attr="data-match-id=${match.id}"
+						th:if="${#authorization.expression('hasRole(''ADMIN'')')}"
+						onclick="deleteMatch(this)">Delete</button>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<div class="btn-group">
+		<a href="http://localhost:8080" class="btn btn-info"> Back to the
+			front page</a>
+	</div>
+
+	<div class="btn-group">
+		<a href="http://localhost:8080/teams" class="btn btn-info"> List
+			of teams</a>
+	</div>
+
+	<div class="btn-group"
+		th:if="${#authorization.expression('hasRole(''ADMIN'')') OR #authorization.expression('hasRole(''MANAGER'')')}">
+		<a href="http://localhost:8080/users" class="btn btn-info">
+			Userlist</a>
+	</div>
+
+	<div class="btn-group"
+		th:if="${#authorization.expression('hasRole(''ADMIN'')') OR #authorization.expression('hasRole(''MANAGER'')')}">
+		<a href="http://localhost:8080/matches/add" class="btn btn-info">
+			Create a match</a>
+	</div>
+
+	<form th:action="@{/logout}" method="post">
+		<input type="submit" value="Logout" />
+	</form>
+
+	<script>
+    function deleteMatch(button) {
+        var matchId = button.getAttribute('data-match-id');
+        var confirmation = confirm('Are you sure you want to delete this match?');
+
+        if (confirmation) {
+            fetch(`/api/matches/${matchId}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                location.reload();
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+        }
+    }
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+
+<head>
+<title>Log in</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link type="text/css" rel="stylesheet" href="/css/bootstrap.min.css"
+	th:href="@{/css/bootstrap.min.css}" />
+</head>
+<body>
+
+	<h3>This is the front page of your team!</h3>
+	<br>
+	<h6>Welcome to our site! We can help you keep track of your
+		upcoming matches, members, tournaments etc.</h6>
+	<h6>For more information either:</h6>
+	<h6>Call us at +3581234567</h6>
+	<h6>Email us at footballtourneys@myy.haaga-helia.fi</h6>
+	<br>
+
+	<div th:if="${param.error}">Invalid username and password.</div>
+	<div th:if="${param.logout}">You have been logged out.</div>
+	<form th:action="@{/login}" method="post">
+		<div>
+			<label> User Name : <input type="text" name="username" />
+			</label>
+		</div>
+		<div>
+			<label> Password: <input type="password" name="password" />
+			</label>
+		</div>
+		<div>
+			<input type="submit" value="Sign In" class="btn btn-info" />
+		</div>
+
+
+	</form>
+</body>
+</html>
