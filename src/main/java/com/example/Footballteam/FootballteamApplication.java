@@ -40,6 +40,19 @@ public class FootballteamApplication {
 			matchRepo.saveAll(Arrays.asList(match1, match2, match3));
 
 			// Add players and managers
+			 * 
+			 * Test data for logging in: 
+			 * 
+			 * Role_Player
+			 * Username: Paaland Password Paaland
+			 * Username: Player Password Player
+			 * 
+			 * Role_Manager
+			 * Username: Baldie Password Baldie
+			 * Username: Manager Password Manager
+			 * 
+			 * Username: admin Password admin
+			 * 
 			AppUser player1 = new AppUser("Nordic Meatshield", "0441982654", "paaland@citeh.com", 2000, "9", "Paaland",
 					"$2y$10$.PlUVg7dZf09OlgnHpQCj.EfZm95qIW.4MW9B4uo7NNEFnHH390Ui", "ROLE_PLAYER");
 			AppUser player2 = new AppUser("John Cena", "0441234567", "John.Cena@WWE.com", 1978, "8", "JohnCena",
