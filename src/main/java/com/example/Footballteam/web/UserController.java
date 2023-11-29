@@ -64,7 +64,12 @@ public class UserController {
 		AppUser user = userService.getUserById(userId);
 		model.addAttribute("user", user);
 		model.addAttribute("teams", teams);
+		if (user.getRole().equals("ROLE_ADMIN")) {
+			return "editadmin";
+		}
+		else {
 		return "edituser";
+		}
 	}
 	
 	@GetMapping("/edit/password")

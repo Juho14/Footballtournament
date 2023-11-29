@@ -58,6 +58,9 @@ public class AppUserServiceImpl implements AppUserService {
 	        existingUser.setKitNumber(updatedUser.getKitNumber());
 	        existingUser.setUsername(updatedUser.getUsername());
 	        existingUser.setRole(updatedUser.getRole());
+	        if (existingUser.getRole().equalsIgnoreCase("ROLE_ADMIN")) {
+	        	existingUser.setKitnumber("ADMIN");
+	        }
 	        existingUser.setTeam(updatedUser.getTeam());
 	        return userRepo.save(existingUser);
 	    } else {
