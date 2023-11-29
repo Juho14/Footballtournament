@@ -77,6 +77,5 @@ public class UserController {
 		AppUser currentUser = authService.getCurrentUser();
 		model.addAttribute("user", currentUser);
 		return "editpassword";
-		
 	}
 }

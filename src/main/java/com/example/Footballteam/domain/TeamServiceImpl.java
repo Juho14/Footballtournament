@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -92,41 +93,49 @@ public class TeamServiceImpl implements TeamService {
 
 	@Override
 	public boolean deleteTeam(Long teamId) {
-	    Optional<Team> optionalTeam = teamRepo.findById(teamId);
-	    if (optionalTeam.isPresent()) {
-	        Team team = optionalTeam.get();
+		Optional<Team> optionalTeam = teamRepo.findById(teamId);
+		if (optionalTeam.isPresent()) {
+			Team team = optionalTeam.get();
 
-	        // Set the team of members to null
-	        List<AppUser> members = team.getMembers();
-	        if (members != null && !members.isEmpty()) {
-	            for (AppUser member : members) {
-	                member.setTeam(null);
-	            }
-	        }
+			// Set the team of members to null
+			List<AppUser> members = team.getMembers();
+			System.out.println(members);
+			if (members != null && !members.isEmpty()) {
+				for (AppUser member : members) {
+					member.setTeam(null);
+				}
+			}
 
-	        // Set homeTeam and awayTeam to null in matches where the team is involved
-	        List<Footballmatch> homeMatches = team.getHomeMatches();
-	        if (homeMatches != null && !homeMatches.isEmpty()) {
-	            for (Footballmatch match : homeMatches) {
-	                match.setHomeTeam(null);
-	            }
-	        }
+			handleMatches(team.getHomeMatches(), team);
+			handleMatches(team.getAwayMatches(), team);
 
-	        List<Footballmatch> awayMatches = team.getAwayMatches();
-	        if (awayMatches != null && !awayMatches.isEmpty()) {
-	            for (Footballmatch match : awayMatches) {
-	                match.setAwayTeam(null);
-	            }
-	        }
+			// Delete the team
+			teamRepo.delete(team);
 
-	        // Delete the team
-	        teamRepo.delete(team);
-
-	        return true;
-	    } else {
-	        return false;
-	    }
+			return true;
+		} else {
+			return false;
+		}
 	}
 
+	private void handleMatches(List<Footballmatch> matches, Team team) {
+	    if (matches != null && !matches.isEmpty()) {
+	        for (Footballmatch match : matches) {
+	            List<AppUser> attendees = match.getAttendees();
+	            if (attendees != null && !attendees.isEmpty()) {
+	                Iterator<AppUser> iterator = attendees.iterator();
+	                while (iterator.hasNext()) {
+	                    AppUser attendee = iterator.next();
+	                    if (team.equals(attendee.getTeam()) || attendee.getTeam() == null) {
+	                        iterator.remove();
+	                    }
+	                }
+	            }
 
+	            match.setHomeTeam(null);
+	            match.setAwayTeam(null);
+	        }
+	    }
+
+}
 }

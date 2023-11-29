@@ -25,9 +25,9 @@ table {
 		<tbody>
 
 			<tr th:each="match : ${match}">
-				<td th:text="${match.homeTeam.name}"></td>
+				<td th:text="${match.homeTeam != null ? match.homeTeam.name : '~Removed~'}"></td>
 				<td th:text="${match.result}"></td>
-				<td th:text="${match.awayTeam.name}"></td>
+				<td th:text="${match.awayTeam != null ? match.awayTeam.name : '~Removed~'}"></td>
 				<td th:text="${#temporals.format(match.matchDate, 'dd.MM.yyyy')}"></td>
 			</tr>
 
